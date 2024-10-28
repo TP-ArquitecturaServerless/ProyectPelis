@@ -55,7 +55,7 @@ export default function Dashboard() {
           watchLater: false,
           overview: movie.overview,
           releaseDate: movie.release_date,
-          videoUrl: `https://example.com/${movie.id}.mp4` // Ejemplo de URL de video
+          videoUrl: `https://youtu.be/WE4AJuIvG1Y?si=qOVyWZFJQvi-1utx` 
         }))
 
         setMovies([...initialMovies, ...fetchedMovies])
