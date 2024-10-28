@@ -1,0 +1,52 @@
+@keyframes fly-bat {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+      transform: translate(200px, -100px) rotate(45deg) scale(1.2);
+    }
+    50% {
+      transform: translate(400px, 0) rotate(90deg) scale(1.4);
+    }
+    75% {
+      transform: translate(200px, 100px) rotate(45deg) scale(1.2);
+    }
+    100% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+  }
+  
+  .animate-fly-bat {
+    animation: fly-bat 20s infinite;
+  }
+  
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in-down {
+    animation: fade-in-down 1s ease-out;
+  }
+  
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in-up {
+    animation: fade-in-up 1s ease-out;
+  }
+  
