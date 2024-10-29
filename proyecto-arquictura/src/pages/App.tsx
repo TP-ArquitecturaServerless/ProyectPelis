@@ -36,7 +36,7 @@ export const Index = () => {
     audio.play().catch(error => console.error("Error playing audio:", error));
     setTimeout(() => {
       setShowHalloweenEffects(false);
-      window.location.href = '/register';
+      window.location.href = '/login';
     }, 3000);
   };
 
@@ -68,7 +68,7 @@ export const Index = () => {
               <h2 className="text-5xl font-bold text-orange-500 mb-6 animate-fade-in-down">🎃Bienvenido a PeliSoft Halloween🎃</h2>
               <p className="text-2xl text-orange-300 mb-8 animate-fade-in-up">Descubre y disfruta de las mejores películas de terror y suspenso.</p>
               <Link 
-                to="/register" 
+                to="/login" 
                 className="bg-orange-600 text-black px-8 py-4 rounded-lg text-xl hover:bg-orange-500 transition duration-300 animate-pulse"
                 onClick={handleHalloweenClick}
                 aria-label="Comienza tu noche de terror y registrate"
