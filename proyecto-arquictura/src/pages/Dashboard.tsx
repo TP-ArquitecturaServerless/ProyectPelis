@@ -16,6 +16,8 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const moviesPerPage = 9;
 
+  
+
   useEffect(() => {
     const fetchMovies = async () => {
       try {
@@ -97,10 +99,10 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {currentMovies.map((movie) => (
             <div key={movie.id} className="bg-orange-800 text-white rounded-lg shadow-md p-4">
-              <img 
-                src={movie.poster_path} 
-                alt={movie.title} 
-                className="w-full h-64 object-cover rounded-md mb-4"
+              <img
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                alt={`Poster de ${movie.title}`}
+                className="w-full h-auto rounded-lg mb-4"
               />
               <h3 className="text-xl font-bold mb-2">{movie.title}</h3>
               <p className='text-sm mb-1'>Descripcion: {movie.overview}</p>
