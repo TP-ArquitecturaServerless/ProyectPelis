@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getMovies } from '../services/getMovies';
 import { Movie } from '../services/interfaces/Movies';
+import { Eye,X } from 'lucide-react';
 
 export default function Dashboard() {
   const { logout } = useAuth();
@@ -10,6 +11,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState<boolean>(true);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
  
   const [releaseYear, setReleaseYear] = useState<string>('');
   const [titleSearch, setTitleSearch] = useState<string>('');
@@ -55,11 +58,66 @@ export default function Dashboard() {
   const startIndex = (currentPage - 1) * moviesPerPage;
   const currentMovies = filteredMovies.slice(startIndex, startIndex + moviesPerPage);
 
+  //funcion para el modal 
+  const openModal = (movie: Movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedMovie(null);
+    setIsModalOpen(false);
+  };
+
+
   return (
-    <div className="min-h-screen bg-black text-orange-300 relative overflow-hidden">
+    <div className="min-h-screen bg-black text-orange-300 relative overflow-hidden font-sans">
+        {/* Efecto de murciélagos */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <div 
+            key={i} 
+            className="absolute animate-fly-bat"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 10}s`,
+              animationDuration: `${10 + Math.random() * 10}s`
+            }}
+          >
+            🦇
+          </div>
+        ))}
+      </div>
+
       <header className="bg-orange-900 p-4 shadow-lg relative z-10">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-3xl font-bold text-orange-500">🎃PeliSoft Halloween🎃</h1>
+
+          {/* Filtros en el header */}
+          <div className="flex space-x-4">
+            <label className="flex flex-col text-orange-500 font-semibold">
+              Año de Lanzamiento:
+              <input 
+                type="text" 
+                value={releaseYear} 
+                onChange={(e) => setReleaseYear(e.target.value)} 
+                placeholder="Ej. 2020"
+                className="bg-gray-800 text-orange-300 p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-orange-600"
+              />
+            </label>
+            <label className="flex flex-col text-orange-500 font-semibold">
+              Buscar por Título:
+              <input 
+                type="text" 
+                value={titleSearch} 
+                onChange={(e) => setTitleSearch(e.target.value)} 
+                placeholder="Ej. Inception"
+                className="bg-gray-800 text-orange-300 p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-orange-600"
+              />
+            </label>
+          </div>
+
           <nav>
             <Link to="/" onClick={logout} className="text-orange-300 hover:text-orange-500 transition duration-300">
               Cerrar Sesión
@@ -70,45 +128,26 @@ export default function Dashboard() {
 
       <main className="container mx-auto mt-10 px-4 relative z-10">
         <h2 className="text-4xl font-bold text-orange-500 mb-6">Tu Portal de Pesadillas y Fantasía</h2>
-        
-        {/* Filtros */}
-        <div className="mb-6 flex flex-col gap-4">
-          <label>
-            Año de Lanzamiento:
-            <input 
-              type="text" 
-              value={releaseYear} 
-              onChange={(e) => setReleaseYear(e.target.value)} 
-              placeholder="Ej. 2020"
-              className="bg-gray-800 text-orange-300 p-2 rounded"
-            />
-          </label>
-          <label>
-            Buscar por Título:
-            <input 
-              type="text" 
-              value={titleSearch} 
-              onChange={(e) => setTitleSearch(e.target.value)} 
-              placeholder="Ej. Inception"
-              className="bg-gray-800 text-orange-300 p-2 rounded"
-            />
-          </label>
-        </div>
 
         {/* Listado de tarjetas de películas */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentMovies.map((movie) => (
-            <div key={movie.id} className="bg-orange-800 text-white rounded-lg shadow-md p-4">
+            <div key={movie.id} className="bg-orange-900 rounded-lg shadow-lg p-4 hover:shadow-orange-500/50 transition duration-300">
               <img
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 alt={`Poster de ${movie.title}`}
-                className="w-full h-auto rounded-lg mb-4"
+                className="w-full h-64 object-cover rounded-md mb-4"
               />
-              <h3 className="text-xl font-bold mb-2">{movie.title}</h3>
-              <p className='text-sm mb-1'>Descripcion: {movie.overview}</p>
+              <h3 className="text-xl font-semibold text-orange-500">{movie.title}</h3>
+              <p className='text-sm mb-1 line-clamp-3'>Descripcion: {movie.overview}</p>
               <p className="text-sm mb-1">Lanzamiento: {movie.release_date}</p>
-              <p className="text-sm mb-1">Popularidad: {movie.popularity}</p>
-              <p className="text-sm">Idioma: {movie.original_language}</p>
+              <button
+                onClick={() => openModal(movie)}
+                className="mt-4 p-2 rounded bg-orange-800 hover:bg-orange-700 transition duration-300 flex items-center justify-center w-full"
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Ver
+              </button>
             </div>
           ))}
         </div>
@@ -125,7 +164,69 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
+        
       </main>
+
+      {/* Modal de película */}
+      {isModalOpen && selectedMovie && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-orange-900 text-orange-300 p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-start mb-4">
+          <h2 className="text-3xl font-bold text-orange-500">{selectedMovie.title}</h2>
+            <button 
+              onClick={closeModal} 
+               className="text-orange-300 hover:text-orange-500"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            </div>
+            <img 
+              src={`https://image.tmdb.org/t/p/w500${selectedMovie.backdrop_path}`} 
+              alt={selectedMovie.title} 
+              className="w-full h-64 object-cover rounded-md mb-4"
+            />
+            {/* aqui se mostrara la fecha, pipular y clasificacion */}
+            <div className="flex space-x-6 text-white mt-4">
+              {/* Popularidad */}
+              <div className="flex flex-col items-center">
+                <span className="text-sm font-semibold text-orange-400">Popularidad</span>
+                <span className="text-lg font-bold">{selectedMovie.popularity}</span> {/* Cambia '85%' por la variable correspondiente */}
+              </div>
+              {/* divisor */}
+              <div className="h-8 w-px bg-orange-700 mx-4"></div>
+
+              {/* Año */}
+              <div className="flex flex-col items-center">
+                <span className="text-sm font-semibold text-orange-400">Año</span>
+                <span className="text-lg font-bold">{selectedMovie.release_date}</span> {/* Cambia '1982' por la variable correspondiente */}
+              </div>
+
+              <div className="h-8 w-px bg-orange-700 mx-4"></div>
+
+              {/* Clasificación */}
+              <div className="flex flex-col items-center">
+                <span className="text-sm font-semibold text-orange-400">Clasificación</span>
+                <span className={`text-lg font-bold px-2 py-1 rounded ${selectedMovie.adult ? 'text-red-600 bg-red-900' : ''}`}>
+                  {selectedMovie.adult ? '+18' : 'Apto para todos'}
+                </span>
+              </div>
+            </div>
+
+            {/* y aqui los demas datos */}
+            <p className="text-orange-300 mb-2"><strong className="text-orange-400">Resumen:</strong> {selectedMovie.overview}</p>
+            <p><strong className="text-orange-400">Categoría:</strong> {selectedMovie.genre_ids.join(', ')}</p>
+            <p><strong className="text-orange-400">Idioma original:</strong> {selectedMovie.original_language}</p>
+            <p><strong className="text-orange-400">Promedio de votos:</strong> {selectedMovie.vote_average}</p>
+            <p><strong className="text-orange-400">Número de votos:</strong> {selectedMovie.vote_count}</p>
+          
+            <div className="mt-4 flex justify-center">
+              <button className="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded">
+                Ver ahora ▶️
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
