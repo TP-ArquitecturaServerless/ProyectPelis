@@ -10,7 +10,7 @@ export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Cargando...</div>; // Puedes reemplazar con un spinner u otro indicador de carga
+    return <div>Cargando...</div>; 
   }
 
   return user ? children : <Navigate to="/login" replace />;

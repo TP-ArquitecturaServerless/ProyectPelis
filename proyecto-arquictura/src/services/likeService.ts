@@ -1,3 +1,4 @@
+//componente para guardar los likes en la base de datos firestore.
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore"
 import { db } from "./firebase"
 

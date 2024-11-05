@@ -1,4 +1,4 @@
-
+//Componente para obtener las peliculas que estan guardadas en la db de firestore.
 import {Firestore,collection, getDocs} from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { Movie } from './interfaces/Movies';

@@ -36,7 +36,8 @@ export default function Dashboard() {
       };
       fetchLikedMovies();
     }, [user]);
-
+  
+    //funcion para filtrar las peliculas
   useEffect(() => {
     const fetchMovies = async () => {
       try {
@@ -51,7 +52,8 @@ export default function Dashboard() {
     };
     fetchMovies();
   }, []);
-
+ 
+  //funcion de buscador por titulo y fecha de lanzamiento
   useEffect(() => {
     const applyFilters = () => {
       const filtered = movies.filter(movie => {
@@ -65,16 +67,20 @@ export default function Dashboard() {
     };
     applyFilters();
   }, [movies, releaseYear, titleSearch]);
-
+  
+  // función paginate actualiza el estado de la página actual.
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  //cargar pelicula
   if (loading) return <p>Cargando películas...</p>;
   if (error) return <p>{error}</p>;
-
+  
+  /// función para Calcular el índice inicial de los elementos que se mostrarán en la página actual.
   const startIndex = (currentPage - 1) * moviesPerPage;
+  //funcion para Obtener solo los elementos que deben mostrarse en la página actual.
   const currentMovies = filteredMovies.slice(startIndex, startIndex + moviesPerPage);
 
- // Función toggleLike modificada para almacenar en Firestore
+ // Función toggleLike modificada para almacenar en Firestore los like.
  const toggleLike = async (movieID: string) => {
   if (!user) return;
 
@@ -86,19 +92,20 @@ export default function Dashboard() {
   setLikedMovies(updatedLikedMovies);
 
   try {
-    await addLike(user.uid, movieID); // Agrega el like en Firestore
+    // Agrega el like en Firestore
+    await addLike(user.uid, movieID); 
   } catch (error) {
     console.error("Error al actualizar el like en Firestore:", error);
   }
 };
 
 
-  //funcion para el modal 
+  //funcion para  abrir el modal 
   const openModal = (movie: Movie) => {
     setSelectedMovie(movie);
     setIsModalOpen(true);
   };
-
+  //funcion para cerrar el modal
   const closeModal = () => {
     setSelectedMovie(null);
     setIsModalOpen(false);
@@ -124,13 +131,14 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-
+      
       <header className="bg-orange-900 p-4 shadow-lg relative z-10">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-3xl font-bold text-orange-500">🎃PeliSoft Halloween🎃</h1>
 
-          {/* Filtros en el header */}
+          {/* Buscadores */}
           <div className="flex space-x-4">
+            {/* budcsdor por año de lanzamiento*/}
             <label className="flex flex-col text-orange-500 font-semibold">
               Año de Lanzamiento:
               <input 
@@ -141,6 +149,7 @@ export default function Dashboard() {
                 className="bg-gray-800 text-orange-300 p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-orange-600"
               />
             </label>
+            {/* buscador por titulo */}
             <label className="flex flex-col text-orange-500 font-semibold">
               Buscar por Título:
               <input 
@@ -152,7 +161,7 @@ export default function Dashboard() {
               />
             </label>
           </div>
-
+          {/* Boton de cerrar sesion */}
           <nav>
             <Link to="/" onClick={logout} className="text-orange-300 hover:text-orange-500 transition duration-300">
               Cerrar Sesión
@@ -165,7 +174,7 @@ export default function Dashboard() {
         
         {/* Recomendaciones Basadas en Likes */}
         <Recommendations likedMovies={likedMovies} movies={movies} />
-
+        {/* linea separadora */}
         <div className="border-b border-orange-500 my-4"></div>
 
         {/* Listado de tarjetas de películas */}
@@ -180,6 +189,7 @@ export default function Dashboard() {
               <h3 className="text-xl font-semibold text-orange-500">{movie.title}</h3>
               <p className='text-sm mb-1 line-clamp-3'>Descripcion: {movie.overview}</p>
               <p className="text-sm mb-1">Lanzamiento: {movie.release_date}</p>
+              
               {/* aqui deve ir el boton para dar like */}
                <button
                 onClick={() => toggleLike(movie.id.toString())} 

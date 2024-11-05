@@ -1,3 +1,4 @@
+//Componente para obtener las peliculas que fueron likeada d ecada usuario .
 import { db } from './firebase';
 //ayudan a acceder a documentos especif de firebase
 import { doc, getDoc } from 'firebase/firestore';

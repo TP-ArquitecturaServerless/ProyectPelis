@@ -1,3 +1,4 @@
+//componente para filtrar las recomendaciones basados en los likes del usuario.
 import { Movie } from '../services/interfaces/Movies';
 
 interface RecommendationsProps {
@@ -11,12 +12,12 @@ const Recommendations: React.FC<RecommendationsProps> = ({ likedMovies, movies }
           {/* Fondo de efecto sangre */}
           <div className=""></div>
           <h2 className="text-2xl font-bold text-orange-500 mb-6 relative z-10">
-            Recomendaciones Basadas en tus Likes
+            Recomendaciones
           </h2>
           <div className="overflow-x-auto whitespace-nowrap z-10 relative">
             <div className="flex space-x-4">
               {likedMovies.map((movieID) => {
-                const movie = movies.find((m) => m.id === Number(movieID)); // Convertir movieID a número
+                const movie = movies.find((m) => m.id === Number(movieID)); 
                 return movie ? (
                   <div key={movie.id} className="relative">
                     <img
