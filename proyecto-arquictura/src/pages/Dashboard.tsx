@@ -3,23 +3,37 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getMovies } from '../services/getMovies';
 import { Movie } from '../services/interfaces/Movies';
-import { Eye,X } from 'lucide-react';
+import { Eye,X ,Heart} from 'lucide-react';
+import Recommendations from '../component/Recomendaciones';
+import addLike from '../services/likeService';
+import getLikedMovies from '../services/getLikeMovie';
 
 export default function Dashboard() {
-  const { logout } = useAuth();
+  const { logout ,user} = useAuth();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [likedMovies, setLikedMovies] = useState<(string)[]>([]);
+
  
   const [releaseYear, setReleaseYear] = useState<string>('');
   const [titleSearch, setTitleSearch] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const moviesPerPage = 9;
 
-  
+    // Cargar likes desde Firestore al cargar el componente
+    useEffect(() => {
+      const fetchLikedMovies = async () => {
+        if (user) {
+          const likes = await getLikedMovies(user.uid);
+          setLikedMovies(likes);
+        }
+      };
+      fetchLikedMovies();
+    }, [user]);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -57,6 +71,25 @@ export default function Dashboard() {
 
   const startIndex = (currentPage - 1) * moviesPerPage;
   const currentMovies = filteredMovies.slice(startIndex, startIndex + moviesPerPage);
+
+ // Función toggleLike modificada para almacenar en Firestore
+ const toggleLike = async (movieID: string) => {
+  if (!user) return;
+
+  const isLiked = likedMovies.includes(movieID);
+  const updatedLikedMovies = isLiked
+    ? likedMovies.filter(id => id !== movieID)
+    : [...likedMovies, movieID];
+
+  setLikedMovies(updatedLikedMovies);
+
+  try {
+    await addLike(user.uid, movieID); // Agrega el like en Firestore
+  } catch (error) {
+    console.error("Error al actualizar el like en Firestore:", error);
+  }
+};
+
 
   //funcion para el modal 
   const openModal = (movie: Movie) => {
@@ -127,7 +160,11 @@ export default function Dashboard() {
       </header>
 
       <main className="container mx-auto mt-10 px-4 relative z-10">
-        <h2 className="text-4xl font-bold text-orange-500 mb-6">Tu Portal de Pesadillas y Fantasía</h2>
+        
+        {/* Recomendaciones Basadas en Likes */}
+        <Recommendations likedMovies={likedMovies} movies={movies} />
+
+        <div className="border-b border-orange-500 my-4"></div>
 
         {/* Listado de tarjetas de películas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -141,6 +178,16 @@ export default function Dashboard() {
               <h3 className="text-xl font-semibold text-orange-500">{movie.title}</h3>
               <p className='text-sm mb-1 line-clamp-3'>Descripcion: {movie.overview}</p>
               <p className="text-sm mb-1">Lanzamiento: {movie.release_date}</p>
+              {/* aqui deve ir el boton para dar like */}
+               <button
+                onClick={() => toggleLike(movie.id.toString())} 
+                className={`mt-2 p-2 rounded ${likedMovies.includes(movie.id.toString()) ? 'bg-red-500' : 'bg-orange-800'} hover:bg-orange-700 transition duration-300 flex items-center justify-center w-full`}
+              >
+                <Heart className="h-4 w-4 mr-2" />
+                {likedMovies.includes(movie.id.toString()) ? 'Liked' : 'Like'}
+              </button>
+
+              {/* boton de ver */}
               <button
                 onClick={() => openModal(movie)}
                 className="mt-4 p-2 rounded bg-orange-800 hover:bg-orange-700 transition duration-300 flex items-center justify-center w-full"
