@@ -7,6 +7,8 @@ import { Eye,X ,Heart} from 'lucide-react';
 import Recommendations from '../component/Recomendaciones';
 import addLike from '../services/likeService';
 import getLikedMovies from '../services/getLikeMovie';
+import ScaryEffect from './ScaryEffect';
+
 
 export default function Dashboard() {
   const { logout ,user} = useAuth();
@@ -268,6 +270,7 @@ export default function Dashboard() {
           
             <div className="mt-4 flex justify-center">
               <button className="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded">
+              <ScaryEffect/>
                 Ver ahora ▶️
               </button>
             </div>
